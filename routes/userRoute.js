@@ -17,13 +17,7 @@ const router = express.Router();
 // [SECTION] Routes
 
 // Route for user registration
-router.post(
-  "/",
-  validateEmail,
-  validatePassword,
-  validateMobileNo,
-  userController.registerUser
-);
+router.post("/", validateEmail, validatePassword, validateMobileNo, userController.registerUser);
 
 // Route for logging in
 router.post("/login", userController.loginUser);
@@ -32,20 +26,10 @@ router.post("/login", userController.loginUser);
 router.get("/details", verify, userController.getProfile);
 
 // Set user to admin
-router.patch(
-  "/:id/set-as-admin",
-  verify,
-  verifyAdmin,
-  userController.setToAdmin
-);
+router.patch("/:userId/set-as-admin", verify, verifyAdmin, userController.setToAdmin);
 
 // Password Reset
-router.patch(
-  "/update-password",
-  verify,
-  validatePassword,
-  userController.updatePassword
-);
+router.patch("/update-password", verify, validatePassword, userController.updatePassword);
 
 // [SECTION] Export Route System
 module.exports = router;

@@ -24,9 +24,7 @@ module.exports.registerUser = async (req, res) => {
 
     // Save the user to the database
     const savedUser = await newUser.save();
-    res
-      .status(201)
-      .send({ message: "Registered successfully!", data: savedUser });
+    res.status(201).send({ message: "Registered successfully!", data: savedUser });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -38,21 +36,15 @@ module.exports.loginUser = async (req, res) => {
 
   try {
     const existingUser = await User.findOne({ email: req.body.email });
-    console.log(existingUser);
 
     // User does not exist
     if (existingUser == null) {
       return res.status(404).send({ error: "No email found." });
       // If user exists
     } else {
-      const isPasswordCorrect = await bcrypt.compareSync(
-        req.body.password,
-        existingUser.password
-      );
+      const isPasswordCorrect = await bcrypt.compareSync(req.body.password, existingUser.password);
       if (isPasswordCorrect) {
-        return res
-          .status(200)
-          .send({ access: auth.createAccessToken(existingUser) });
+        return res.status(200).send({ access: auth.createAccessToken(existingUser) });
       } else {
         return res.status(401).send("Email and password do not match");
       }
@@ -83,11 +75,7 @@ module.exports.setToAdmin = async (req, res) => {
     const { isAdmin } = req.user;
 
     if (isAdmin == true) {
-      const newUserAdmin = await User.findByIdAndUpdate(
-        id,
-        { isAdmin: true },
-        { new: true }
-      );
+      const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
 
       return res.status(200).json({ newUserAdmin });
     } else {
