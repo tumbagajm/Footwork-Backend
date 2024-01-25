@@ -5,6 +5,7 @@ const cors = require("cors");
 // Import Routes
 const userRoutes = require("./routes/userRoute");
 const productRoutes = require("./routes/productRoute");
+const cartRoutes = require("./routes/cartRoute");
 
 // Environment Setup
 const port = 4000;
@@ -33,6 +34,7 @@ mongoose.connection.once("open", () => console.log("Now connected to MongoDB  At
 // Backend Routes
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
+app.use("/carts", cartRoutes);
 
 // [SECTION] Server Gateway Response
 // if(require.main) would allow us to listen to the app directly if it is not imported to another module, it will run the app directly

@@ -1,6 +1,7 @@
 // [SECTION] Dependencies and Modules
 // The "User" variable is defined using a capitalized letter to indicate that we are using its "User" model for code readability
 const User = require("../models/User");
+const Cart = require("../models/Cart");
 const bcrypt = require("bcrypt");
 const auth = require("../auth");
 
@@ -24,7 +25,16 @@ module.exports.registerUser = async (req, res) => {
 
     // Save the user to the database
     const savedUser = await newUser.save();
-    res.status(201).send({ message: "Registered successfully!", data: savedUser });
+
+    // Creates a cart once a new user is registered
+    const newCart = new Cart({
+      userId: savedUser.id,
+    });
+
+    // Save the cart to the database
+    const savedCart = await newCart.save();
+
+    res.status(201).send({ message: "Registered successfully!", data: savedUser, savedCart });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

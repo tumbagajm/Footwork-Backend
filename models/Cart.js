@@ -1,32 +1,38 @@
 const mongoose = require("mongoose");
 
-// [SECTION] Schema/Blueprint
+const cartItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: [true, "productId is required"],
+  },
+  quantity: {
+    type: Number,
+    required: [true, "quantity is required"],
+  },
+  subtotal: {
+    type: Number,
+    default: 0,
+    required: [true, "subtotal is required"],
+  },
+});
+
 const cartSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    required: [true, "User ID is required"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "userId is required"],
   },
-  cartItems: [
-    {
-      productId: {
-        type: String,
-        required: [true, "Course ID is requried"],
-      },
-      quantity: {
-        type: Number,
-        required: [true, "Quantity is required"],
-      },
-      subtotal: {
-        type: Number,
-        required: [true, "Subtotal is required"],
-      },
-    },
-  ],
+  cartItems: {
+    type: [cartItemSchema],
+    required: [true, "cartItems is required"],
+  },
   totalPrice: {
     type: Number,
-    required: [true, "totalPrice is Required"],
+    default: 0,
+    required: [true, "totalPrice is required"],
   },
-  orderedOn: {
+  addedOn: {
     type: Date,
     default: Date.now,
   },
