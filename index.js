@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 // Import Routes
 const userRoutes = require("./routes/userRoute");
+const productRoutes = require("./routes/productRoute");
 
 // Environment Setup
 const port = 4000;
@@ -27,12 +28,11 @@ mongoose.connect(
   `mongodb+srv://admin:${mongoDBPassword}@gloriosodb.gewtusc.mongodb.net/${dbName}?retryWrites=true&w=majority`
 );
 // Promts a message in the terminal once the connection is open and we are able to successfully connect our database
-mongoose.connection.once("open", () =>
-  console.log("Now connected to MongoDB  Atlas")
-);
+mongoose.connection.once("open", () => console.log("Now connected to MongoDB  Atlas"));
 
 // Backend Routes
 app.use("/users", userRoutes);
+app.use("/products", productRoutes);
 
 // [SECTION] Server Gateway Response
 // if(require.main) would allow us to listen to the app directly if it is not imported to another module, it will run the app directly
