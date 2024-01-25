@@ -16,5 +16,7 @@ router.post("/add-to-cart", verify, cartController.addToCart);
 // Change product quantities route
 router.patch("/update-cart-quantity", verify, cartController.updateCartQuantity);
 
+router.patch("/clear-cart", verify, cartController.clearCart);
+
 // [SECTION] Export Route System
 module.exports = router;

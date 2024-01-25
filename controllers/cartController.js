@@ -16,7 +16,7 @@ module.exports.getCart = async (req, res) => {
   }
 };
 
-// Add to cart
+// // Add to cart
 module.exports.addToCart = async (req, res) => {
   try {
     // validate input
@@ -41,34 +41,46 @@ module.exports.addToCart = async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // Calculate subtotal for the new item
-    const subtotal = product.price * quantity;
+    // Check if the product already exists in the cart
+    const productExistsInCart = userCart.cartItems.some((item) => item.productId.equals(productId));
+    if (productExistsInCart) {
+      req.body.fromAddToCart = true;
+      return updateCartQuantity(req, res);
+    } else {
+      // Calculate subtotal for the new item
+      const subtotal = product.price * quantity;
 
-    // Update the cart
-    const updatedCart = {
-      $push: {
-        cartItems: {
-          productId,
-          quantity,
-          subtotal,
+      // Update the cart
+      const updatedCart = {
+        $push: {
+          cartItems: {
+            productId,
+            quantity,
+            subtotal,
+          },
         },
-      },
-      $inc: { totalPrice: subtotal },
-    };
-    // Update and save the cart
-    const updatedUserCart = await Cart.findByIdAndUpdate(userCart._id, updatedCart, { new: true });
+        $inc: { totalPrice: subtotal },
+      };
+      // Update and save the cart
+      const updatedUserCart = await Cart.findByIdAndUpdate(userCart._id, updatedCart, {
+        new: true,
+      });
 
-    res.status(200).json({ message: "Item added to cart", cart: updatedUserCart });
+      res.status(200).json({ message: "Item added to cart", cart: updatedUserCart });
+    }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 // Change product quantities in cart
-module.exports.updateCartQuantity = async (req, res) => {
+const updateCartQuantity = async (req, res) => {
   try {
+    console.log(req.body);
     // Validate input
     const { productId, quantity } = req.body;
+    let fromAddToCart = req.body.fromAddToCart || false;
     if (!productId || !quantity || quantity <= 0) {
       return res.status(400).json({ error: "Invalid input" });
     }
@@ -94,10 +106,18 @@ module.exports.updateCartQuantity = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
-
-    // Update the quantity and subtotal
-    existingCartItem.quantity = quantity;
-    existingCartItem.subtotal = quantity * product.price;
+    // if the function is called from addToCart, add the quantity
+    if (fromAddToCart) {
+      // Update the quantity and subtotal
+      existingCartItem.quantity += quantity;
+      existingCartItem.subtotal += quantity * product.price;
+    }
+    // If not from addToCart, change the quantity
+    else {
+      // Update the quantity and subtotal
+      existingCartItem.quantity = quantity;
+      existingCartItem.subtotal = quantity * product.price;
+    }
 
     // Recalculate total price
     userCart.totalPrice = userCart.cartItems.reduce((total, item) => total + item.subtotal, 0);
@@ -111,3 +131,23 @@ module.exports.updateCartQuantity = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// Clear cart
+module.exports.clearCart = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    const clearCart = await Cart.findOneAndUpdate(
+      { userId: id },
+      { cartItems: [], totalPrice: 0 },
+      { new: true }
+    );
+
+    return res.status(200).json({ message: "Cart cleared successfully", data: clearCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports.updateCartQuantity = updateCartQuantity;
