@@ -131,6 +131,37 @@ const updateCartQuantity = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+// Remove item from cart
+module.exports.removeFromCart = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+    const userCart = await Cart.findOne({ userId });
+
+    if (!userCart) {
+      return res.status(404).json({ error: "User cart not found" });
+    }
+    console.log(productId);
+
+    // Filters the cart items excluding the productId to be removed
+    const updatedCartItems = userCart.cartItems.filter((item) => item.productId != productId);
+
+    console.log(`Filtered: ${updatedCartItems}`);
+
+    const totalPrice = updatedCartItems.reduce((total, item) => total + item.subtotal, 0);
+
+    const updatedUserCart = await Cart.findOneAndUpdate(
+      { userId },
+      { cartItems: updatedCartItems, totalPrice },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Item removed from cart successfully", cart: updatedUserCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 // Clear cart
 module.exports.clearCart = async (req, res) => {

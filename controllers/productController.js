@@ -143,3 +143,57 @@ module.exports.activateProduct = async (req, res) => {
     res.status(500).json({ error: "Product not found" });
   }
 };
+
+// Search Product By Name
+module.exports.searchByName = async (req, res) => {
+  try {
+    const { productName } = req.body;
+    // Check if product name is empty
+    if (!productName) {
+      return res.status(400).json({ error: "Product name is required." });
+    }
+    // Search for the product in the database
+    const products = await Product.find({
+      name: { $regex: productName, $options: "i" },
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found." });
+    }
+    return res.json(products);
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Search by price range
+module.exports.searchByPrice = async (req, res) => {
+  try {
+    const { minPrice, maxPrice } = req.body;
+
+    if (!minPrice && !maxPrice && typeof minPrice !== "number" && typeof maxPrice !== "number") {
+      return res
+        .status(400)
+        .json({ message: "Provide minPrice or maxPrice, and they must be numbers." });
+    }
+    // Construct the query based on the provided price range
+    const query = {
+      price: {
+        $gte: minPrice,
+        $lte: maxPrice,
+      },
+    };
+    // Fetch products from the database based on the query
+    const filteredProducts = await Product.find(query);
+
+    if (!filteredProducts || filteredProducts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found within the specified price range." });
+    }
+
+    return res.json({ products: filteredProducts });
+  } catch (error) {
+    res.status(500).json({ message: `Internal Server Error: ${error.message}` });
+  }
+};
