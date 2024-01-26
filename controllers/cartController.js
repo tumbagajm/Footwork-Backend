@@ -138,15 +138,22 @@ module.exports.removeFromCart = async (req, res) => {
     const userId = req.user.id;
     const userCart = await Cart.findOne({ userId });
 
+    // Check if user cart exists
     if (!userCart) {
       return res.status(404).json({ error: "User cart not found" });
     }
-    console.log(productId);
+
+    // Check if the product exists in the cart
+    const existingCartItem = userCart.cartItems.find((item) => item.productId == productId);
+
+    console.log(existingCartItem);
+
+    if (!existingCartItem) {
+      return res.status(404).json({ error: "Product not found in the cart" });
+    }
 
     // Filters the cart items excluding the productId to be removed
     const updatedCartItems = userCart.cartItems.filter((item) => item.productId != productId);
-
-    console.log(`Filtered: ${updatedCartItems}`);
 
     const totalPrice = updatedCartItems.reduce((total, item) => total + item.subtotal, 0);
 
