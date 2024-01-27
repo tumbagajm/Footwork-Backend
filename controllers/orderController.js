@@ -54,13 +54,6 @@ module.exports.getUserOrders = async (req, res) => {
 // Retrieve all orders
 module.exports.getAllOrders = async (req, res) => {
   try {
-    const { id } = req.user;
-
-    // Checks if user is an admin
-    const user = await User.findById(id);
-    if (!user || !user.isAdmin) {
-      return res.status(400).json({ error: "You have invalid access." });
-    }
     // Gets all orders
     const allOrders = await Order.find();
 
