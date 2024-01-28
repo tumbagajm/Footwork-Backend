@@ -5,11 +5,13 @@ const userController = require("../controllers/userController");
 const {
   verify,
   verifyAdmin,
+  isLoggedIn,
+} = require("../auth");
+const {
   validateEmail,
   validatePassword,
   validateMobileNo,
-  isLoggedIn,
-} = require("../auth");
+} = require("../verification");
 
 // [SECTION] Routing Component
 const router = express.Router();
