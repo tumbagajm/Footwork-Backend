@@ -3,22 +3,24 @@ const mongoose = require("mongoose");
 // [SECTION] Schema/Blueprint
 const orderSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    required: [true, "User ID is required"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'userId is required'],
   },
   productsOrdered: [
     {
       productId: {
-        type: String,
-        required: [true, "Course ID is requried"],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: [true, 'productId is required'],
       },
       quantity: {
         type: Number,
-        required: [true, "Quantity is required"],
+        required: [true, 'quantity is required'],
       },
       subtotal: {
         type: Number,
-        required: [true, "Subtotal is required"],
+        required: [true, 'subtotal is required'],
       },
     },
   ],
