@@ -9,7 +9,7 @@ const cartRoutes = require("./routes/cartRoute");
 const orderRoutes = require("./routes/orderRoute");
 
 // Environment Setup
-const port = 4000;
+const port = 4001;
 // MongoDB password
 const mongoDBPassword = "admin1234";
 // Database name
@@ -33,10 +33,10 @@ mongoose.connect(
 mongoose.connection.once("open", () => console.log("Now connected to MongoDB  Atlas"));
 
 // Backend Routes
-app.use("/users", userRoutes);
-app.use("/products", productRoutes);
-app.use("/carts", cartRoutes);
-app.use("/orders", orderRoutes);
+app.use("/b1/users", userRoutes);
+app.use("/b1/products", productRoutes);
+app.use("/b1/carts", cartRoutes);
+app.use("/b1/orders", orderRoutes);
 
 // [SECTION] Server Gateway Response
 // if(require.main) would allow us to listen to the app directly if it is not imported to another module, it will run the app directly
