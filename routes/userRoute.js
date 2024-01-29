@@ -33,5 +33,8 @@ router.patch("/:userId/set-as-admin", verify, verifyAdmin, userController.setToA
 // Password Reset
 router.patch("/update-password", verify, validatePassword, userController.updatePassword);
 
+// Update Profile
+router.patch("/update-profile", verify, validateMobileNo, userController.updateProfile);
+
 // [SECTION] Export Route System
 module.exports = router;
