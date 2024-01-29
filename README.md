@@ -27,6 +27,7 @@ User Resources:
 - Set user as admin (Admin only)
 - Retrieve user details
 - Update password
+- Update user details
 
 Product Resources
 
@@ -49,3 +50,4 @@ Order Resources:
 - Non-admin user checkout (Create order)
 - Retrieve authenticated user's orders
 - Retrieve all orders (Admin only)
+- Update order status (Admin only)
