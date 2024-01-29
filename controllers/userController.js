@@ -6,110 +6,126 @@ const bcrypt = require("bcrypt");
 const auth = require("../auth");
 
 module.exports.registerUser = async (req, res) => {
-  try {
-    // Check if the email already exists in the database
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
+    try {
+        // Check if the email already exists in the database
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
+
+        // If it doesn't exist yet, continue
+        let newUser = new User({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            mobileNo: req.body.mobileNo,
+            isAdmin: req.body.isAdmin || false,
+            password: bcrypt.hashSync(req.body.password, 10),
+        });
+
+        // Save the user to the database
+        const savedUser = await newUser.save();
+
+        // Creates a cart once a new user is registered
+        const newCart = new Cart({
+            userId: savedUser.id,
+        });
+
+        // Save the cart to the database
+        const savedCart = await newCart.save();
+
+        res.status(201).send({ message: "Registered successfully!", data: savedUser, savedCart });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
-
-    // If it doesn't exist yet, continue
-    let newUser = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      mobileNo: req.body.mobileNo,
-      isAdmin: req.body.isAdmin || false,
-      password: bcrypt.hashSync(req.body.password, 10),
-    });
-
-    // Save the user to the database
-    const savedUser = await newUser.save();
-
-    // Creates a cart once a new user is registered
-    const newCart = new Cart({
-      userId: savedUser.id,
-    });
-
-    // Save the cart to the database
-    const savedCart = await newCart.save();
-
-    res.status(201).send({ message: "Registered successfully!", data: savedUser, savedCart });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 };
 
 // User authentication
 module.exports.loginUser = async (req, res) => {
-  // the fineOne method returns the first record in the collection that matches the search criteria
+    // the fineOne method returns the first record in the collection that matches the search criteria
 
-  try {
-    const existingUser = await User.findOne({ email: req.body.email });
+    try {
+        const existingUser = await User.findOne({ email: req.body.email });
 
-    // User does not exist
-    if (existingUser == null) {
-      return res.status(404).send({ error: "No email found." });
-      // If user exists
-    } else {
-      const isPasswordCorrect = await bcrypt.compareSync(req.body.password, existingUser.password);
-      if (isPasswordCorrect) {
-        return res.status(200).send({ access: auth.createAccessToken(existingUser) });
-      } else {
-        return res.status(401).send("Email and password do not match");
-      }
+        // User does not exist
+        if (existingUser == null) {
+            return res.status(404).send({ error: "No email found." });
+            // If user exists
+        } else {
+            const isPasswordCorrect = await bcrypt.compareSync(req.body.password, existingUser.password);
+            if (isPasswordCorrect) {
+                return res.status(200).send({ access: auth.createAccessToken(existingUser) });
+            } else {
+                return res.status(401).send("Email and password do not match");
+            }
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 };
 
 // Retrieve User Details
 module.exports.getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.body.id);
-    if (!user) {
-      return res.status(400).send({ error: "User not found" });
+    try {
+        const user = await User.findById(req.body.id);
+        if (!user) {
+            return res.status(400).send({ error: "User not found" });
+        }
+        user.password = "******";
+        return res.status(200).send(user);
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
-    user.password = "******";
-    return res.status(200).send(user);
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 };
 
 // Set user to admin
 module.exports.setToAdmin = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { isAdmin } = req.user;
+    try {
+        const { id } = req.params;
+        const { isAdmin } = req.user;
 
-    if (isAdmin == true) {
-      const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
+        if (isAdmin == true) {
+            const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
 
-      return res.status(200).json({ newUserAdmin });
-    } else {
-      return res.status(400).json({ error: "Failed to set to admin." });
+            return res.status(200).json({ newUserAdmin });
+        } else {
+            return res.status(400).json({ error: "Failed to set to admin." });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: "Internal Server Error!" });
     }
-  } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error!" });
-  }
 };
 
 // Reset Password
 module.exports.updatePassword = async (req, res) => {
-  try {
-    const { password } = req.body;
-    const { id } = req.user;
+    try {
+        const { password } = req.body;
+        const { id } = req.user;
 
-    // Hash/encrypt the new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+        // Hash/encrypt the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(id, { password: hashedPassword });
+        await User.findByIdAndUpdate(id, { password: hashedPassword });
 
-    res.status(200).json({ message: "Password reset successfully" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal Server Error!" });
-  }
+        res.status(200).json({ message: "Password reset successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Internal Server Error!" });
+    }
 };
+
+// Update profile
+module.exports.updateProfile = async (req, res) => {
+    try {
+        // const userId = req.user.id;
+        const { id } = req.user;
+
+        const { firstName, lastName, mobileNo } = req.body;
+
+        const updateUser = await User.findByIdAndUpdate(id, { firstName, lastName, mobileNo }, { new: true });
+
+        return res.json(updateUser);
+    } catch {
+        return res.status(500).json({ message: "Failed to update profile." });
+    }
+}
