@@ -49,4 +49,4 @@ if (require.main === module) {
 }
 // hello
 // In creating APIs, exporting modules in the "index.js" file is ommited
-module.exports = app;
+module.exports = {app,mongoose};
