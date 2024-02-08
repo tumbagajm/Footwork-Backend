@@ -67,7 +67,7 @@ module.exports.loginUser = async (req, res) => {
 // Retrieve User Details
 module.exports.getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.body.id);
+        const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(400).send({ error: "User not found" });
         }
