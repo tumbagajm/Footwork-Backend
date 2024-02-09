@@ -14,10 +14,10 @@ router.post("/", verify, verifyAdmin, productController.addProduct);
 router.get("/all", verify, verifyAdmin, productController.getAllProducts);
 
 // Retrieve all active products route
-router.get("/", verify, productController.getAllActiveProducts);
+router.get("/", productController.getAllActiveProducts);
 
 // Retrieve single product route
-router.get("/:productId", verify, productController.getSingleProduct);
+router.get("/:productId", productController.getSingleProduct);
 
 // Update product route
 router.patch("/:productId/update", verify, verifyAdmin, productController.updateProduct);
