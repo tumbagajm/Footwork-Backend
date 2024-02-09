@@ -7,6 +7,7 @@ module.exports.addProduct = async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
+      images: req.body.images,
       isActive: req.body.isActive,
     });
 
