@@ -36,5 +36,7 @@ router.patch("/update-password", verify, validatePassword, userController.update
 // Update Profile
 router.patch("/update-profile", verify, validateMobileNo, userController.updateProfile);
 
+// Update Profile Picture
+router.patch("/update-profile-picture", verify, userController.updateProfilePicture );
 // [SECTION] Export Route System
 module.exports = router;

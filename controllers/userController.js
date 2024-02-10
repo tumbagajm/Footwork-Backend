@@ -126,6 +126,18 @@ module.exports.updateProfile = async (req, res) => {
 
         return res.json(updateUser);
     } catch {
-        return res.status(500).json({ message: "Failed to update profile." });
+        return res.status(500).json({ error: "Failed to update profile." });
+    }
+}
+
+module.exports.updateProfilePicture = async (req, res) =>{
+    try{
+        const {id} = req.user;
+        const {image} = req.body;
+        const updatedUserPicture = await await User.findByIdAndUpdate(id, {image}, {new: true});
+
+        return res.status(200).json({message: "Profile picture updated successfully!", data: updatedUserPicture });
+    }catch{
+        return res.status(500).json({ error: "Failed to update profile picture." });
     }
 }
