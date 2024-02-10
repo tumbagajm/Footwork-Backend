@@ -122,7 +122,7 @@ module.exports.updateProfile = async (req, res) => {
 
         const { firstName, lastName, mobileNo } = req.body;
 
-        const updateUser = await User.findByIdAndUpdate(id, { firstName, lastName, mobileNo }, { new: true });
+        const updateUser = await User.findByIdAndUpdate(id, { firstName, lastName, mobileNo, image }, { new: true });
 
         return res.json(updateUser);
     } catch {
