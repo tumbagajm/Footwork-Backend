@@ -134,7 +134,7 @@ module.exports.updateProfilePicture = async (req, res) =>{
     try{
         const {id} = req.user;
         const {image} = req.body;
-        const updatedUserPicture = await await User.findByIdAndUpdate(id, {image}, {new: true});
+        const updatedUserPicture = await User.findByIdAndUpdate(id, {image}, {new: true});
 
         return res.status(200).json({message: "Profile picture updated successfully!", data: updatedUserPicture });
     }catch{
