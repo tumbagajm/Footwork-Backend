@@ -31,7 +31,7 @@ module.exports.checkout = async (req, res) => {
     );
 
     // return res.status(201).json(true);
-    return res.status(201).json({ order: newOrder, cart: clearCart });
+    return res.status(201).json({ order: newOrder, cart: clearCart, message: "Checkout successful! Thank you for your purchase." });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
