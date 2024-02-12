@@ -7,7 +7,7 @@ module.exports.checkout = async (req, res) => {
   try {
     const { id } = req.user;
     // Get user cart
-    const userCart = await Cart.findOne({ userId: id }).populate('productsOrdered.productId', 'name');
+    const userCart = await Cart.findOne({ userId: id });
 
     if (!userCart) {
       return res.status(400).json({ error: "User cart not found" });
@@ -42,7 +42,7 @@ module.exports.checkout = async (req, res) => {
 module.exports.getUserOrders = async (req, res) => {
   try {
     const { id } = req.user;
-    const userOrders = await Order.find({ userId: id });
+    const userOrders = await Order.find({ userId: id }).populate('productsOrdered.productId', 'name');
 
     if (!userOrders) {
       return res.status(404).json({ error: "No orders found." });
