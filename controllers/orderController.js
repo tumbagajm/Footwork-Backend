@@ -42,7 +42,7 @@ module.exports.checkout = async (req, res) => {
 module.exports.getUserOrders = async (req, res) => {
   try {
     const { id } = req.user;
-    const userOrders = await Order.find({ userId: id }).populate('productsOrdered.productId', 'name price images').populate('userId', 'firstName lastName');
+    const userOrders = await Order.find({ userId: id }).populate('productsOrdered.productId', 'name price images');
 
     if (!userOrders) {
       return res.status(404).json({ error: "No orders found." });
@@ -61,7 +61,7 @@ module.exports.getAllOrders = async (req, res) => {
     // Gets all orders
     const allOrders = await Order.find();
 
-    return res.status(200).json({ message: "Showing all orders", data: allOrders }).populate('productsOrdered.productId', 'name');
+    return res.status(200).json({ message: "Showing all orders", data: allOrders }).populate('productsOrdered.productId', 'name price images').populate('userId', 'firstName lastName');
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
