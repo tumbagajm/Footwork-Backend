@@ -94,16 +94,17 @@ exports.getAllUsers = async (req, res) => {
 // Set user to admin
 module.exports.setToAdmin = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { isAdmin } = req.user;
+        const { userId } = req.params;
+        
+        // Your middleware should ensure that only admins can reach this point
 
-        if (isAdmin == true) {
-            const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
+        const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
 
-            return res.status(200).json({ newUserAdmin });
-        } else {
-            return res.status(400).json({ error: "Failed to set to admin." });
+        if (!newUserAdmin) {
+            return res.status(404).json({ error: "User not found." });
         }
+
+        return res.status(200).json({ user: newUserAdmin, message: "User set to admin successfully." });
     } catch (error) {
         return res.status(500).json({ error: "Internal Server Error!" });
     }
