@@ -98,7 +98,7 @@ module.exports.setToAdmin = async (req, res) => {
         
         // Your middleware should ensure that only admins can reach this point
 
-        const newUserAdmin = await User.findByIdAndUpdate(id, { isAdmin: true }, { new: true });
+        const newUserAdmin = await User.findByIdAndUpdate(userId, { isAdmin: true }, { new: true });
 
         if (!newUserAdmin) {
             return res.status(404).json({ error: "User not found." });
