@@ -7,7 +7,7 @@ module.exports.checkout = async (req, res) => {
   try {
     const { id } = req.user;
     // Get user cart
-    const userCart = await Cart.findOne({ userId: id });
+    const userCart = await Cart.findOne({ userId: id }).populate('productsOrdered.productId', 'name');
 
     if (!userCart) {
       return res.status(400).json({ error: "User cart not found" });
