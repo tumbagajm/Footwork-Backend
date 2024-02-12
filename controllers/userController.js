@@ -56,7 +56,7 @@ module.exports.loginUser = async (req, res) => {
             if (isPasswordCorrect) {
                 return res.status(200).send({ access: auth.createAccessToken(existingUser) });
             } else {
-                return res.status(401).send({error: "Email and password do not match"});
+                return res.status(401).send({ error: "Email and password do not match" });
             }
         }
     } catch (error) {
@@ -75,6 +75,19 @@ module.exports.getProfile = async (req, res) => {
         return res.status(200).send(user);
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+// Get all users
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({data: { users}});
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal server error',
+        });
     }
 };
 
@@ -130,14 +143,14 @@ module.exports.updateProfile = async (req, res) => {
     }
 }
 
-module.exports.updateProfilePicture = async (req, res) =>{
-    try{
-        const {id} = req.user;
-        const {image} = req.body;
-        const updatedUserPicture = await User.findByIdAndUpdate(id, {image}, {new: true});
+module.exports.updateProfilePicture = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { image } = req.body;
+        const updatedUserPicture = await User.findByIdAndUpdate(id, { image }, { new: true });
 
-        return res.status(200).json({message: "Profile picture updated successfully!", data: updatedUserPicture });
-    }catch{
+        return res.status(200).json({ message: "Profile picture updated successfully!", data: updatedUserPicture });
+    } catch {
         return res.status(500).json({ error: "Failed to update profile picture." });
     }
 }
