@@ -59,7 +59,7 @@ module.exports.getUserOrders = async (req, res) => {
 module.exports.getAllOrders = async (req, res) => {
   try {
     // Gets all orders
-    const allOrders = await Order.find().populate('productsOrdered.productId', 'name');
+    const allOrders = await Order.find().populate('productsOrdered.productId', 'name price images').populate('userId', 'firstName lastName');
 
     return res.status(200).json({ message: "Showing all orders", data: allOrders });
   } catch (error) {
