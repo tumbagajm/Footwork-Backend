@@ -29,10 +29,10 @@ router.patch("/:productId/archive", verify, verifyAdmin, productController.archi
 router.patch("/:productId/activate", verify, verifyAdmin, productController.activateProduct);
 
 // Search product by name
-router.post("/searchByName", verify, productController.searchByName);
+router.post("/searchByName", productController.searchByName);
 
 // Search product by price range
-router.post("/searchByPrice", verify, productController.searchByPrice);
+router.post("/searchByPrice", productController.searchByPrice);
 
 // [SECTION] Export Route System
 module.exports = router;
