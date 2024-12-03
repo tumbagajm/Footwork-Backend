@@ -13,7 +13,7 @@ const port = 4001;
 // MongoDB password
 const mongoDBPassword = "admin1234";
 // Database name
-const dbName = "Capstone2_API";
+const dbName = "footworkdb";
 
 // [SECTION] Server Setup
 const app = express();
@@ -21,13 +21,19 @@ const app = express();
 // Registering middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+const corsOptions = {
+  origin: "http://localhost:3000",  
+  methods: "GET, POST, PUT, DELETE", // Allow necessary HTTP methods
+};
+app.use(cors(corsOptions));
 
 // [SECTION] Database Connection
 // Connect to our MongoDB database
 // [SECTION] MongoDB Connection thru Mongoose
 mongoose.connect(
-  `mongodb+srv://admin:${mongoDBPassword}@gloriosodb.gewtusc.mongodb.net/${dbName}?retryWrites=true&w=majority`
+  `mongodb+srv://admin:${mongoDBPassword}@footworkdbcluster.jip96.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=FootworkDBCluster`
+  
 );
 // Promts a message in the terminal once the connection is open and we are able to successfully connect our database
 mongoose.connection.once("open", () => console.log("Now connected to MongoDB  Atlas"));

@@ -22,7 +22,7 @@ module.exports.addToCart = async (req, res) => {
     // validate input
     const { productId, quantity } = req.body;
     if (!productId || !quantity || quantity <= 0) {
-      return res.status(400).json({ error: "Invalid input" });
+      return res.status(400).json({ isSuccess: false, error: "Invalid input" });
     }
 
     // Retrieve user's cart or create a new one if it doesn't exist yet
@@ -38,7 +38,7 @@ module.exports.addToCart = async (req, res) => {
     const product = await Product.findById(productId);
 
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ isSuccess:false, error: "Product not found" });
     }
 
     // Check if the product already exists in the cart
@@ -66,11 +66,11 @@ module.exports.addToCart = async (req, res) => {
         new: true,
       });
 
-      res.status(200).json({ message: "Item added to cart", cart: updatedUserCart });
+      res.status(200).json({ isSuccess:true, message: "Item added to cart", cart: updatedUserCart });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ isSuccess:false, error: "Internal Server Error" });
   }
 };
 
