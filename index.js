@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `${process.env.ORIGIN}`,
   methods: "GET, POST, PUT, DELETE", // Allow necessary HTTP methods
 };
 app.use(cors(corsOptions));
