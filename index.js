@@ -2,18 +2,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '.env')});
+
 // Import Routes
 const userRoutes = require("./routes/userRoute");
 const productRoutes = require("./routes/productRoute");
 const cartRoutes = require("./routes/cartRoute");
 const orderRoutes = require("./routes/orderRoute");
-
 // Environment Setup
 const port = 4001;
-// MongoDB password
-const mongoDBPassword = "admin1234";
-// Database name
-const dbName = "footworkdb";
+
 
 // [SECTION] Server Setup
 const app = express();
@@ -23,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: "http://localhost:3000",  
+  origin: "http://localhost:3000",
   methods: "GET, POST, PUT, DELETE", // Allow necessary HTTP methods
 };
 app.use(cors(corsOptions));
@@ -32,17 +31,16 @@ app.use(cors(corsOptions));
 // Connect to our MongoDB database
 // [SECTION] MongoDB Connection thru Mongoose
 mongoose.connect(
-  `mongodb+srv://admin:${mongoDBPassword}@footworkdbcluster.jip96.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=FootworkDBCluster`
-  
+  `${process.env.MONGO_ATLAS_URI}`
 );
 // Promts a message in the terminal once the connection is open and we are able to successfully connect our database
 mongoose.connection.once("open", () => console.log("Now connected to MongoDB  Atlas"));
 
 // Backend Routes
-app.use("/b1/users", userRoutes);
-app.use("/b1/products", productRoutes);
-app.use("/b1/carts", cartRoutes);
-app.use("/b1/orders", orderRoutes);
+app.use("/users", userRoutes);
+app.use("/products", productRoutes);
+app.use("/carts", cartRoutes);
+app.use("/orders", orderRoutes);
 
 // [SECTION] Server Gateway Response
 // if(require.main) would allow us to listen to the app directly if it is not imported to another module, it will run the app directly
@@ -55,4 +53,4 @@ if (require.main === module) {
 }
 // hello
 // In creating APIs, exporting modules in the "index.js" file is ommited
-module.exports = {app,mongoose};
+module.exports = { app, mongoose };
